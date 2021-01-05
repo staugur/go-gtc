@@ -20,7 +20,6 @@ func TestFuncs(t *testing.T) {
 	err := CreateDir(dir)
 	if err != nil {
 		t.Fatalf("create dir fail: %s", dir)
-		t.FailNow()
 	}
 	defer os.Remove(dir)
 	if PathExist(dir) != true {
@@ -55,4 +54,41 @@ func TestFuncs(t *testing.T) {
 		}
 	}
 
+	src := "go.mod"
+	dst := "go.mod.bak"
+	_, err = FileCopy(dst, src)
+	if err != nil {
+		t.Log("fail FileCopy")
+		t.Fatal(err)
+	}
+	defer os.Remove(dst)
+
+	if IsFile(dst) != true {
+		t.Fatal("created dst, but fail IsFile")
+	}
+	srcText, err := FileReadByte(src)
+	if err != nil {
+		t.Fatal("fail FileReadByte")
+	}
+	dstText, err := FileReadStr(dst)
+	if err != nil {
+		t.Fatal("fail FileReadStr")
+	}
+	if string(srcText) != dstText {
+		t.Fatal("fail FileCopy, src and dst are inconsistent")
+	}
+
+	dstN := "go.mod.bak.N"
+	_, err = FileCopyN(dstN, src, 6)
+	if err != nil {
+		t.Log("fail FileCopyN")
+		t.Fatal(err)
+	}
+	defer os.Remove(dstN)
+	dstnText, err := FileReadStr(dstN)
+	if err == nil {
+		if dstnText != "module" {
+			t.Fatal("fail FileCopyN, invalid bytes")
+		}
+	}
 }

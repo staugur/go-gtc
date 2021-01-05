@@ -1,6 +1,7 @@
 package ufc
 
 import (
+	"errors"
 	"io"
 	"io/ioutil"
 	"os"
@@ -63,12 +64,10 @@ func CreateDir(path string) error {
 func FileReadByte(path string) ([]byte, error) {
 	fi, err := os.Open(path)
 	if err != nil {
-		//		panic(err)
 		return nil, err
-	} else {
-		defer fi.Close()
-		return ioutil.ReadAll(fi)
 	}
+	defer fi.Close()
+	return ioutil.ReadAll(fi)
 }
 
 // FileReadStr 读取指定的文件，并返回字符串
@@ -77,8 +76,12 @@ func FileReadStr(path string) (string, error) {
 	return string(raw), err
 }
 
-// FileCopy 复制文件
+// FileCopy 复制文件，会自动创建并覆盖目标文件
 func FileCopy(dstName, srcName string) (written int64, err error) {
+	if !IsFile(srcName) {
+		return 0, errors.New("src file does not exist")
+	}
+
 	src, err := os.Open(srcName)
 	if err != nil {
 		return
@@ -92,8 +95,12 @@ func FileCopy(dstName, srcName string) (written int64, err error) {
 	return io.Copy(dst, src)
 }
 
-// FileCopyN 按字节复制文件
+// FileCopyN 按字节复制文件，会自动创建并覆盖目标文件
 func FileCopyN(dstName, srcName string, n int64) (written int64, err error) {
+	if !IsFile(srcName) {
+		return 0, errors.New("src file does not exist")
+	}
+
 	src, err := os.Open(srcName)
 	if err != nil {
 		return
