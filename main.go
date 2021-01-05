@@ -8,18 +8,29 @@ import (
 
 // PathExist 检测路径是否存在
 func PathExist(path string) bool {
-	if _, err := os.Stat(path); os.IsExist(err) {
-		return true
+	_, err := os.Stat(path)
+	if err != nil {
+		if os.IsExist(err) {
+			return true
+		}
+		return false
 	}
-	return false
+	return true
 }
 
 // PathNotExist 检测路径是否不存在
 func PathNotExist(path string) bool {
-	if _, err := os.Stat(path); os.IsNotExist(err) {
-		return true
+	return !PathExist(path)
+}
+
+// IsDir 是否为目录
+func IsDir(path string) bool {
+	stat, err := os.Stat(path)
+	if err != nil {
+		return false
 	}
-	return false
+	return stat.IsDir()
+
 }
 
 // IsFile 是否为文件（含普通、设备）
@@ -40,23 +51,10 @@ func IsCommonFile(path string) bool {
 	return stat.Mode().IsRegular()
 }
 
-// IsDir 是否为目录
-func IsDir(path string) bool {
-	stat, err := os.Stat(path)
-	if err != nil {
-		return false
-	}
-	return stat.IsDir()
-
-}
-
 // CreateDir 创建文件夹，如果已存在则直接返回，否则按照0755权限创建
 func CreateDir(path string) error {
 	if PathNotExist(path) {
-		err := os.Mkdir(path, 0755)
-		if err != nil {
-			return err
-		}
+		return os.Mkdir(path, os.ModeDir)
 	}
 	return nil
 }
