@@ -5,6 +5,7 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
+	"strconv"
 )
 
 // PathExist 检测路径是否存在
@@ -112,4 +113,19 @@ func FileCopyN(dstName, srcName string, n int64) (written int64, err error) {
 	}
 	defer dst.Close()
 	return io.CopyN(dst, src, n)
+}
+
+// IsTrue 1、t、true、True、TRUE将返回布尔值true，其他（包含发送错误）返回布尔值false
+func IsTrue(v string) bool {
+	b, err := strconv.ParseBool(v)
+	if err != nil {
+		return false
+	}
+	return b
+}
+
+// IsFalse 非IsTrue则是false
+// 如0、f、false、False、FALSE、其他字符串或发生错误时都返回布尔值true
+func IsFalse(v string) bool {
+	return !IsTrue(v)
 }

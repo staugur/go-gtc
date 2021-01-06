@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestFuncs(t *testing.T) {
+func TestFile(t *testing.T) {
 	var dir = "./tmptest"
 	if PathExist(dir) != false {
 		t.Fatal("fail PathExist")
@@ -90,5 +90,57 @@ func TestFuncs(t *testing.T) {
 		if dstnText != "module" {
 			t.Fatal("fail FileCopyN, invalid bytes")
 		}
+	}
+}
+
+func TestBool(t *testing.T) {
+	if IsTrue("1") != true {
+		t.Fatal("1 is true")
+	}
+	if IsTrue("t") != true {
+		t.Fatal("t is true")
+	}
+	if IsTrue("T") != true {
+		t.Fatal("T is true")
+	}
+	if IsTrue("true") != true {
+		t.Fatal("true is true")
+	}
+	if IsTrue("True") != true {
+		t.Fatal("True is true")
+	}
+	if IsTrue("TRUE") != true {
+		t.Fatal("TRUE is true")
+	}
+	if IsTrue("abc") == true {
+		t.Fatal("abc not true")
+	}
+	if IsTrue("") == true {
+		t.Fatal("empty not true")
+	}
+
+	if IsFalse("0") != true {
+		t.Fatal("0 is false")
+	}
+	if IsFalse("f") != true {
+		t.Fatal("f is false")
+	}
+	if IsFalse("F") != true {
+		t.Fatal("F is false")
+	}
+	if IsFalse("false") != true {
+		t.Fatal("false is false")
+	}
+	if IsFalse("False") != true {
+		t.Fatal("False is false")
+	}
+	if IsFalse("FALSE") != true {
+		t.Fatal("FALSE is false")
+	}
+	if IsFalse("abc") != true {
+		t.Fatal("abc is false")
+	}
+	if IsFalse("") != true {
+		t.Fatal("empty is false")
 	}
 }
