@@ -147,16 +147,16 @@ func TestBool(t *testing.T) {
 
 func TestString(t *testing.T) {
 	s := []string{"1", "", "a"}
-	if stringInSlice("", s) != true {
+	if strInSlice("", s) != true {
 		t.Fatal("empty string in slice")
 	}
-	if stringInSlice("1", s) != true {
+	if strInSlice("1", s) != true {
 		t.Fatal("1 in slice")
 	}
-	if stringInSlice("a", s) != true {
+	if strInSlice("a", s) != true {
 		t.Fatal("a in slice")
 	}
-	if stringInSlice("b", s) == true {
+	if strInSlice("b", s) == true {
 		t.Fatal("b not in slice")
 	}
 
@@ -201,6 +201,7 @@ func TestString(t *testing.T) {
 	var s2 [][]string
 	s2 = append(s2, s)
 	s2 = append(s2, []string{"b"})
+	s2 = append(s2, []string{"1"})
 
 	has, _ = InArraySlice(s, s2)
 	if has != true {
@@ -209,7 +210,21 @@ func TestString(t *testing.T) {
 
 	has, _ = InArraySlice([]string{"b"}, s2)
 	if has != true {
-		t.Fatal("[]string{b} not in s2")
+		t.Fatal("[]string{b} in s2")
 	}
 
+	has, _ = InArraySlice([]string{"c"}, s2)
+	if has == true {
+		t.Fatal("[]string{c} not in s2")
+	}
+
+	has, _ = InArraySlice([]string{"1"}, s2)
+	if has != true {
+		t.Fatal("[]string{1} in s2")
+	}
+
+	has, _ = InArraySlice([]int{1}, s2)
+	if has == true {
+		t.Fatal("[]int{1} not in s2")
+	}
 }

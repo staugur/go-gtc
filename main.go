@@ -131,8 +131,8 @@ func IsFalse(v string) bool {
 	return !IsTrue(v)
 }
 
-// stringInSlice 判断字符串是否在切片中
-func stringInSlice(val string, slice []string) bool {
+// strInSlice 判断字符串是否在切片中
+func strInSlice(val string, slice []string) bool {
 	for _, b := range slice {
 		if b == val {
 			return true
@@ -141,7 +141,7 @@ func stringInSlice(val string, slice []string) bool {
 	return false
 }
 
-// InArraySlice 判断值是否在数组或切片中，允许基本类型
+// InArraySlice 判断值是否在数组或切片中，嵌套类型采用reflect.DeepEqual深度对比结果
 func InArraySlice(val interface{}, array interface{}) (exists bool, index int) {
 	exists = false
 	index = -1
