@@ -5,6 +5,7 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
+	"reflect"
 	"strconv"
 )
 
@@ -128,4 +129,32 @@ func IsTrue(v string) bool {
 // 如0、f、false、False、FALSE、其他字符串或发生错误时都返回布尔值true
 func IsFalse(v string) bool {
 	return !IsTrue(v)
+}
+
+// stringInSlice 判断字符串是否在切片中
+func stringInSlice(val string, slice []string) bool {
+	for _, b := range slice {
+		if b == val {
+			return true
+		}
+	}
+	return false
+}
+
+// InArraySlice 判断值是否在数组或切片中，允许基本类型
+func InArraySlice(val interface{}, array interface{}) (exists bool, index int) {
+	exists = false
+	index = -1
+	kind := reflect.TypeOf(array).Kind()
+	if kind == reflect.Slice || kind == reflect.Array {
+		s := reflect.ValueOf(array)
+		for i := 0; i < s.Len(); i++ {
+			if reflect.DeepEqual(val, s.Index(i).Interface()) == true {
+				index = i
+				exists = true
+				return
+			}
+		}
+	}
+	return
 }

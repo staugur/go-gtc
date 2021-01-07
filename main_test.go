@@ -144,3 +144,72 @@ func TestBool(t *testing.T) {
 		t.Fatal("empty is false")
 	}
 }
+
+func TestString(t *testing.T) {
+	s := []string{"1", "", "a"}
+	if stringInSlice("", s) != true {
+		t.Fatal("empty string in slice")
+	}
+	if stringInSlice("1", s) != true {
+		t.Fatal("1 in slice")
+	}
+	if stringInSlice("a", s) != true {
+		t.Fatal("a in slice")
+	}
+	if stringInSlice("b", s) == true {
+		t.Fatal("b not in slice")
+	}
+
+	has, index := InArraySlice("", s)
+	if has != true {
+		t.Fatal("empty string in InArraySlice")
+	}
+	if index != 1 {
+		t.Fatal("empty index error")
+	}
+
+	has, _ = InArraySlice("1", s)
+	if has != true {
+		t.Fatal("1 in InArraySlice")
+	}
+
+	has, _ = InArraySlice("a", s)
+	if has != true {
+		t.Fatal("a in InArraySlice")
+	}
+
+	has, _ = InArraySlice("b", s)
+	if has == true {
+		t.Fatal("b not in InArraySlice")
+	}
+
+	has, _ = InArraySlice(1, s)
+	if has == true {
+		t.Fatal("1(number) not in InArraySlice")
+	}
+
+	has, _ = InArraySlice("a", "abc")
+	if has == true {
+		t.Fatal("a not in abc(string), InArraySlice not allow string")
+	}
+
+	has, _ = InArraySlice("a", map[string]int{"a": 1})
+	if has == true {
+		t.Fatal("a not in map, InArraySlice not allow map")
+	}
+
+	var s2 [][]string
+	s2 = append(s2, s)
+	s2 = append(s2, []string{"b"})
+
+	has, _ = InArraySlice(s, s2)
+	if has != true {
+		t.Fatal("s in s2")
+	}
+
+	has, _ = InArraySlice([]string{"b"}, s2)
+	if has != true {
+		t.Fatal("[]string{b} not in s2")
+	}
+
+}
