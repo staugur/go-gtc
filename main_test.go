@@ -147,16 +147,16 @@ func TestBool(t *testing.T) {
 
 func TestString(t *testing.T) {
 	s := []string{"1", "", "a"}
-	if strInSlice("", s) != true {
+	if StrInSlice("", s) != true {
 		t.Fatal("empty string in slice")
 	}
-	if strInSlice("1", s) != true {
+	if StrInSlice("1", s) != true {
 		t.Fatal("1 in slice")
 	}
-	if strInSlice("a", s) != true {
+	if StrInSlice("a", s) != true {
 		t.Fatal("a in slice")
 	}
-	if strInSlice("b", s) == true {
+	if StrInSlice("b", s) == true {
 		t.Fatal("b not in slice")
 	}
 

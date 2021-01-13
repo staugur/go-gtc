@@ -131,8 +131,8 @@ func IsFalse(v string) bool {
 	return !IsTrue(v)
 }
 
-// strInSlice 判断字符串是否在切片中
-func strInSlice(val string, slice []string) bool {
+// StrInSlice 判断字符串是否在切片中
+func StrInSlice(val string, slice []string) bool {
 	for _, b := range slice {
 		if b == val {
 			return true
