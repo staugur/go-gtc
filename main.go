@@ -33,7 +33,6 @@ func IsDir(path string) bool {
 		return false
 	}
 	return stat.IsDir()
-
 }
 
 // IsFile 是否为文件（含普通、设备）
@@ -116,7 +115,7 @@ func FileCopyN(dstName, srcName string, n int64) (written int64, err error) {
 	return io.CopyN(dst, src, n)
 }
 
-// IsTrue 1、t、true、True、TRUE将返回布尔值true，其他（包含发送错误）返回布尔值false
+// IsTrue 仅当值为 1、t、、T、true、True、TRUE 时返回布尔值true，其他（错误）返回false
 func IsTrue(v string) bool {
 	b, err := strconv.ParseBool(v)
 	if err != nil {
@@ -125,10 +124,23 @@ func IsTrue(v string) bool {
 	return b
 }
 
-// IsFalse 非IsTrue则是false
+// NotTrue 非IsTrue则是false
 // 如0、f、false、False、FALSE、其他字符串或发生错误时都返回布尔值true
-func IsFalse(v string) bool {
+func NotTrue(v string) bool {
 	return !IsTrue(v)
+}
+
+// IsFalse 仅当值为 0、f、F、false、False、FALSE 时返回布尔值true，其他（错误）返回false
+func IsFalse(v string) bool {
+	b, err := strconv.ParseBool(v)
+	if err != nil {
+		return false
+	}
+	if b == true {
+		return false
+	}
+	// b is false
+	return true
 }
 
 // StrInSlice 判断字符串是否在切片中

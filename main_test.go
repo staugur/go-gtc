@@ -119,6 +119,31 @@ func TestBool(t *testing.T) {
 		t.Fatal("empty not true")
 	}
 
+	if NotTrue("0") != true {
+		t.Fatal("0 is false")
+	}
+	if NotTrue("f") != true {
+		t.Fatal("f is false")
+	}
+	if NotTrue("F") != true {
+		t.Fatal("F is false")
+	}
+	if NotTrue("false") != true {
+		t.Fatal("false is false")
+	}
+	if NotTrue("False") != true {
+		t.Fatal("False is false")
+	}
+	if NotTrue("FALSE") != true {
+		t.Fatal("FALSE is false")
+	}
+	if NotTrue("abc") != true {
+		t.Fatal("abc is false")
+	}
+	if NotTrue("") != true {
+		t.Fatal("empty is false")
+	}
+
 	if IsFalse("0") != true {
 		t.Fatal("0 is false")
 	}
@@ -137,11 +162,11 @@ func TestBool(t *testing.T) {
 	if IsFalse("FALSE") != true {
 		t.Fatal("FALSE is false")
 	}
-	if IsFalse("abc") != true {
-		t.Fatal("abc is false")
+	if IsFalse("abc") != false {
+		t.Fatal("abc is not false")
 	}
-	if IsFalse("") != true {
-		t.Fatal("empty is false")
+	if IsFalse("") != false {
+		t.Fatal("empty is not false")
 	}
 }
 
