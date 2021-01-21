@@ -7,6 +7,7 @@ import (
 	"os"
 	"reflect"
 	"strconv"
+	"strings"
 )
 
 // PathExist 检测路径是否存在
@@ -53,7 +54,7 @@ func IsCommonFile(path string) bool {
 	return stat.Mode().IsRegular()
 }
 
-// CreateDir 创建文件夹，如果已存在则直接返回，否则按照0755权限创建
+// CreateDir 创建文件夹（无递归），如果已存在则直接返回，否则按照0755权限创建
 func CreateDir(path string) error {
 	if PathNotExist(path) {
 		return os.Mkdir(path, os.ModeDir)
@@ -115,8 +116,11 @@ func FileCopyN(dstName, srcName string, n int64) (written int64, err error) {
 	return io.CopyN(dst, src, n)
 }
 
-// IsTrue 仅当值为 1、t、、T、true、True、TRUE 时返回布尔值true，其他（错误）返回false
+// IsTrue 仅当值为 1、t、、T、true、True、TRUE、on 时返回布尔值true，其他（错误）返回false
 func IsTrue(v string) bool {
+	if strings.ToLower(v) == "on" {
+		return true
+	}
 	b, err := strconv.ParseBool(v)
 	if err != nil {
 		return false
@@ -130,8 +134,11 @@ func NotTrue(v string) bool {
 	return !IsTrue(v)
 }
 
-// IsFalse 仅当值为 0、f、F、false、False、FALSE 时返回布尔值true，其他（错误）返回false
+// IsFalse 仅当值为 0、f、F、false、False、FALSE、off 时返回布尔值true，其他（错误）返回false
 func IsFalse(v string) bool {
+	if strings.ToLower(v) == "off" {
+		return true
+	}
 	b, err := strconv.ParseBool(v)
 	if err != nil {
 		return false

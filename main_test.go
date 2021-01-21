@@ -17,7 +17,12 @@ func TestFile(t *testing.T) {
 		t.Fatal("fail IsDir")
 	}
 
-	err := CreateDir(dir)
+	err := CreateDir("a/b/c")
+	if err == nil {
+		t.Fatal("create cannot deep")
+	}
+
+	err = CreateDir(dir)
 	if err != nil {
 		t.Fatalf("create dir fail: %s", dir)
 	}
@@ -118,6 +123,9 @@ func TestBool(t *testing.T) {
 	if IsTrue("") == true {
 		t.Fatal("empty not true")
 	}
+	if IsTrue("on") != true {
+		t.Fatal("on is true")
+	}
 
 	if NotTrue("0") != true {
 		t.Fatal("0 is false")
@@ -167,6 +175,9 @@ func TestBool(t *testing.T) {
 	}
 	if IsFalse("") != false {
 		t.Fatal("empty is not false")
+	}
+	if IsFalse("oFF") != true {
+		t.Fatal("off is false")
 	}
 }
 
