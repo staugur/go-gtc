@@ -10,6 +10,8 @@ import (
 	"strings"
 )
 
+const version = "0.1.0"
+
 // PathExist 检测路径是否存在
 func PathExist(path string) bool {
 	_, err := os.Stat(path)
