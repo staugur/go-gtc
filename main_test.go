@@ -34,7 +34,7 @@ func TestFile(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		if fi.Mode().String() != "-rwxr-xr-x" {
+		if fi.Mode().String() != "drwxr-xr-x" {
 			t.Error("createdir permission error")
 		}
 	}
