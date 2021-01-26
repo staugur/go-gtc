@@ -57,7 +57,7 @@ func IsCommonFile(path string) bool {
 // CreateDir 创建文件夹（无递归），如果已存在则直接返回，否则按照0755权限创建
 func CreateDir(path string) error {
 	if PathNotExist(path) {
-		return os.Mkdir(path, os.ModeDir)
+		return os.Mkdir(path, 0755)
 	}
 	return nil
 }

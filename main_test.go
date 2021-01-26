@@ -2,6 +2,7 @@ package ufc
 
 import (
 	"os"
+	"runtime"
 	"testing"
 )
 
@@ -27,6 +28,16 @@ func TestFile(t *testing.T) {
 		t.Fatalf("create dir fail: %s", dir)
 	}
 	defer os.Remove(dir)
+
+	if runtime.GOOS == "linux" {
+		fi, err := os.Stat(dir)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if fi.Mode().String() != "-rwxr-xr-x" {
+			t.Error("createdir permission error")
+		}
+	}
 	if PathExist(dir) != true {
 		t.Fatal("after fail PathExist")
 	}
