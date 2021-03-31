@@ -12,7 +12,7 @@ import (
 	"strings"
 )
 
-const VERSION = "0.2.0"
+const VERSION = "0.2.1"
 
 // PathExist 检测路径是否存在
 func PathExist(path string) bool {

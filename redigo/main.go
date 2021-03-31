@@ -1,6 +1,6 @@
 // 封装 redigo 客户端
 
-package main // import "tcw.im/ufc/redigo"
+package redigo // import "tcw.im/ufc/redigo"
 
 import (
 	"errors"
