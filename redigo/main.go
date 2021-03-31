@@ -9,7 +9,7 @@ import (
 	"tcw.im/ufc"
 )
 
-const VERSION = "0.1.0"
+const VERSION = "0.1.1"
 
 // DB 一个数据库连接结构
 type DB struct {
