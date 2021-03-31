@@ -1,6 +1,8 @@
 package ufc // import "tcw.im/ufc"
 
 import (
+	"crypto/md5"
+	"encoding/hex"
 	"errors"
 	"io"
 	"io/ioutil"
@@ -10,7 +12,7 @@ import (
 	"strings"
 )
 
-const VERSION = "0.1.1"
+const VERSION = "0.2.0"
 
 // PathExist 检测路径是否存在
 func PathExist(path string) bool {
@@ -57,6 +59,15 @@ func IsCommonFile(path string) bool {
 func CreateDir(path string) error {
 	if PathNotExist(path) {
 		return os.Mkdir(path, 0755)
+	}
+	return nil
+}
+
+// CreateAllDir 递归创建文件夹
+func CreateAllDir(path string) error {
+	if !IsDir(path) {
+		err := os.MkdirAll(path, 0755)
+		return err
 	}
 	return nil
 }
@@ -127,7 +138,7 @@ func IsTrue(v string) bool {
 	return b
 }
 
-// NotTrue 非IsTrue则是false
+// NotTrue 非 IsTrue 则是false
 // 如0、f、false、False、FALSE、其他字符串或发生错误时都返回布尔值true
 func NotTrue(v string) bool {
 	return !IsTrue(v)
@@ -175,4 +186,34 @@ func InArraySlice(val interface{}, array interface{}) (exists bool, index int) {
 		}
 	}
 	return
+}
+
+// MD5 检测字符串MD5值，请注意空值时返回空值
+func MD5(text string) string {
+	if text == "" {
+		return ""
+	}
+	h := md5.New()
+	h.Write([]byte(text))
+	return hex.EncodeToString(h.Sum(nil))
+}
+
+// MD5File 检测文件MD5值，若不是文件或文件不存在返回错误
+func MD5File(filePath string) (MD5 string, err error) {
+	if !IsCommonFile(filePath) {
+		err = errors.New("not found file")
+		return
+	}
+	file, err := os.Open(filePath)
+	if err != nil {
+		return
+	}
+	defer file.Close()
+
+	hash := md5.New()
+	if _, err = io.Copy(hash, file); err != nil {
+		return
+	}
+	hashInBytes := hash.Sum(nil)[:16]
+	return hex.EncodeToString(hashInBytes), nil
 }

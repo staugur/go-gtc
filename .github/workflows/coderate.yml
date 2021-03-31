@@ -1,8 +1,13 @@
 name: Coverage upload
-on: push
+on: [push, pull_request]
 jobs:
   test:
     runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
     steps:
     - name: Install Go
       uses: actions/setup-go@v2
@@ -14,3 +19,4 @@ jobs:
       run: go test ./... -race -coverprofile=coverage.txt -covermode=atomic && bash <(curl -s https://codecov.io/bash)
       env:
         CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}
+        redis_url: redis://localhost
