@@ -1,5 +1,3 @@
-// 封装 redigo 客户端
-
 package redigo // import "tcw.im/ufc/redigo"
 
 import (
