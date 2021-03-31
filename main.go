@@ -1,4 +1,4 @@
-package ufc
+package ufc // import "tcw.im/ufc"
 
 import (
 	"errors"
@@ -10,16 +10,13 @@ import (
 	"strings"
 )
 
-const version = "0.1.0"
+const VERSION = "0.1.1"
 
 // PathExist 检测路径是否存在
 func PathExist(path string) bool {
 	_, err := os.Stat(path)
 	if err != nil {
-		if os.IsExist(err) {
-			return true
-		}
-		return false
+		return os.IsExist(err)
 	}
 	return true
 }
@@ -118,7 +115,7 @@ func FileCopyN(dstName, srcName string, n int64) (written int64, err error) {
 	return io.CopyN(dst, src, n)
 }
 
-// IsTrue 仅当值为 1、t、、T、true、True、TRUE、on 时返回布尔值true，其他（错误）返回false
+// IsTrue 仅当值为 1、t、T、true、True、TRUE、on 时返回布尔值true，其他（错误）返回false
 func IsTrue(v string) bool {
 	if strings.ToLower(v) == "on" {
 		return true
@@ -145,7 +142,7 @@ func IsFalse(v string) bool {
 	if err != nil {
 		return false
 	}
-	if b == true {
+	if b {
 		return false
 	}
 	// b is false
@@ -170,7 +167,7 @@ func InArraySlice(val interface{}, array interface{}) (exists bool, index int) {
 	if kind == reflect.Slice || kind == reflect.Array {
 		s := reflect.ValueOf(array)
 		for i := 0; i < s.Len(); i++ {
-			if reflect.DeepEqual(val, s.Index(i).Interface()) == true {
+			if reflect.DeepEqual(val, s.Index(i).Interface()) {
 				index = i
 				exists = true
 				return
