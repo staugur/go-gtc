@@ -1,4 +1,4 @@
-package redigo // import "tcw.im/ufc/redigo"
+package redigo
 
 import (
 	"errors"
@@ -9,7 +9,7 @@ import (
 	"tcw.im/ufc"
 )
 
-const VERSION = "0.1.1"
+const VERSION = "0.1.2"
 
 // DB 一个数据库连接结构
 type DB struct {
