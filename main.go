@@ -1,4 +1,4 @@
-package ufc // import "tcw.im/ufc"
+package ufc
 
 import (
 	"crypto/md5"
