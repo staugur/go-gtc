@@ -1,4 +1,4 @@
-module tcw.im/ufc/redigo
+module github.com/staugur/go-ufc/redigo
 
 go 1.13
 

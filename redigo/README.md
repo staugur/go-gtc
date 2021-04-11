@@ -3,10 +3,10 @@
 Encapsulate [gomodule/redigo](github.com/gomodule/redigo),
 provide a method similar to the redis command.
 
-[![Go Reference](https://pkg.go.dev/badge/tcw.im/ufc/redigo.svg)](https://pkg.go.dev/tcw.im/ufc/redigo)
+[![Go Reference](https://pkg.go.dev/badge/github.com/staugur/go-ufc/redigo/redigo.svg)](https://pkg.go.dev/github.com/staugur/go-ufc/redigo/redigo)
 
 ## Installation
 
 ```bash
-go get -u tcw.im/ufc/redigo
+go get -u github.com/staugur/go-ufc/redigo
 ```
