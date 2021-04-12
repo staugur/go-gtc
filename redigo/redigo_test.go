@@ -223,9 +223,9 @@ func TestTransaction(t *testing.T) {
 	k4 := "deleted-set"
 	v4 := "v4"
 
-	//k5n := "hash"
-	//k5k := "field"
-	//k5v := "v5"
+	k5n := "hash"
+	k5k := "field"
+	k5v := "v5"
 
 	// 添加数据，测试管道删除操作（未免冲突，添加 KEY 前缀，也是测试）
 	c.Prefix = name
@@ -253,11 +253,14 @@ func TestTransaction(t *testing.T) {
 	err = tc.SRem(k4, v4)
 	raise(t, err)
 
+	err = tc.HSet(k5n, k5k, k5v)
+	raise(t, err)
+
 	// 结束管道，执行命令
 	_, err = tc.Execute()
 	raise(t, err)
 
-	// 测试判定：k0被删除  k4删除v4 k1值为v1 k2长度大于0 v3在k3中
+	// 测试判定：k0被删除 k4删除v4 k1值为v1 k2长度大于0 v3在k3中 k5n有值
 	if has, _ := c.Exsits(k0); has {
 		t.Fatal("key should be not found for k0")
 	}
@@ -284,5 +287,11 @@ func TestTransaction(t *testing.T) {
 	size, _ := c.SCard(k3)
 	if size != 1 {
 		t.Fatal("k3 length should be equal 1")
+	}
+
+	_k5v, err := c.HGet(k5n, k5k)
+	raise(t, err)
+	if _k5v != k5v {
+		t.Fatal("k5 value error for pipe hset")
 	}
 }

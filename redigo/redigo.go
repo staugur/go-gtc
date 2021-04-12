@@ -9,7 +9,7 @@ import (
 	"tcw.im/ufc"
 )
 
-const VERSION = "0.2.0"
+const VERSION = "0.2.1"
 
 // DB 一个数据库连接结构
 type DB struct {
@@ -216,9 +216,9 @@ type TranCommand struct {
 // Send 将命令写入客户端的输出缓冲区。
 func (t *TranCommand) Send(command string, args ...interface{}) error {
 	command = strings.ToUpper(command)
-	key := args[0].(string)
-	if ufc.StrInSlice(command, commandsWithPrefix) && key != "" {
-		args[0] = t.prefix + key
+	nameOrKey := args[0].(string)
+	if ufc.StrInSlice(command, commandsWithPrefix) && nameOrKey != "" {
+		args[0] = t.prefix + nameOrKey
 	}
 
 	return t.conn.Send(command, args...)
@@ -256,4 +256,9 @@ func (t *TranCommand) SAdd(key string, members ...string) error {
 func (t *TranCommand) SRem(key string, members ...string) error {
 	args := kpv(key, members)
 	return t.Send("SREM", args...)
+}
+
+// HSet 管道中的 HSet
+func (t *TranCommand) HSet(name, key, value string) error {
+	return t.Send("HSET", name, key, value)
 }

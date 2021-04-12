@@ -8,5 +8,5 @@ provide a method similar to the redis command.
 ## Installation
 
 ```bash
-go get -u github.com/staugur/go-ufc/redigo
+go get github.com/staugur/go-ufc/redigo
 ```

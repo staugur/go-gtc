@@ -9,5 +9,5 @@ My golang utility function collection
 ## Installation
 
 ```bash
-go get -u tcw.im/ufc
+go get tcw.im/ufc
 ```
