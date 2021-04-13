@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"os"
 	"testing"
-
-	"tcw.im/ufc"
 )
 
 var c *DB
@@ -34,6 +32,12 @@ func TestDBString(t *testing.T) {
 
 	k := "test"
 
+	ping, err := c.Ping()
+	raise(t, err)
+	if !ping {
+		t.Fatal("ping error")
+	}
+
 	ok, err := c.Set(k, "value")
 	raise(t, err)
 	if !ok {
@@ -48,7 +52,7 @@ func TestDBString(t *testing.T) {
 
 	ks, err := c.Keys("*")
 	raise(t, err)
-	if !ufc.StrInSlice(k, ks) {
+	if !inSlice(k, ks) {
 		t.Fatal("keys error")
 	}
 
@@ -181,6 +185,12 @@ func TestHash(t *testing.T) {
 	raise(t, err)
 	if oknum != 1 {
 		t.Fatal("hset error")
+	}
+
+	keysLen, err := c.HLen(n)
+	raise(t, err)
+	if keysLen != 1 {
+		t.Fatal("hlen error")
 	}
 
 	_v, err := c.HGet(n, k)

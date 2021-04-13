@@ -6,10 +6,9 @@ import (
 	"time"
 
 	"github.com/gomodule/redigo/redis"
-	"tcw.im/ufc"
 )
 
-const VERSION = "0.2.1"
+const VERSION = "0.3.0"
 
 // DB 一个数据库连接结构
 type DB struct {
@@ -24,20 +23,7 @@ var commandsWithPrefix = []string{
 	"GET", "SET", "EXISTS", "DEL", "TYPE",
 	"RPUSH", "LPOP", "RPOP", "LLEN", "LRANGE",
 	"SADD", "SREM", "SISMEMBER", "SMEMBERS", "SCARD",
-	"HSET", "HMSET", "HGET", "HGETALL",
-}
-
-// 将key加入到v切片头部
-func kpv(key string, values []string) []interface{} {
-	a := append([]string{key}, values...)
-
-	//converting a []string to a []interface{}
-	x := make([]interface{}, len(a))
-	for i, v := range a {
-		x[i] = v
-	}
-
-	return x
+	"HSET", "HMSET", "HGET", "HGETALL", "HLEN",
 }
 
 // New 打开一个DB连接，rawurl是redis连接串
@@ -62,9 +48,11 @@ func New(rawurl string) (c *DB, err error) {
 // Do 从连接池获取连接并执行命令
 func (c *DB) Do(command string, args ...interface{}) (reply interface{}, err error) {
 	command = strings.ToUpper(command)
-	key := args[0].(string)
-	if ufc.StrInSlice(command, commandsWithPrefix) && key != "" {
-		args[0] = c.Prefix + key
+	if len(args) > 0 {
+		key := args[0].(string)
+		if inSlice(command, commandsWithPrefix) && key != "" {
+			args[0] = c.Prefix + key
+		}
 	}
 	rc := c.pool.Get()
 	defer rc.Close()
@@ -107,6 +95,15 @@ func (c *DB) Exsits(key string) (bool, error) {
 // Del 删除单个Key
 func (c *DB) Del(key string) (bool, error) {
 	return redis.Bool(c.Do("DEL", key))
+}
+
+// Ping 测试连接
+func (c *DB) Ping() (bool, error) {
+	reply, err := redis.String(c.Do("PING"))
+	if err != nil {
+		return false, err
+	}
+	return reply == "PONG", nil
 }
 
 // RPush 将一个或多个值插入到列表的尾部(最右边)
@@ -189,8 +186,13 @@ func (c *DB) HGet(name, key string) (string, error) {
 }
 
 // HGetAll 返回哈希表中所有的字段和值
-func (c *DB) HGetAll(key string) (map[string]string, error) {
-	return redis.StringMap(c.Do("HGETALL", key))
+func (c *DB) HGetAll(name string) (map[string]string, error) {
+	return redis.StringMap(c.Do("HGETALL", name))
+}
+
+// HLen 返回哈希表长度
+func (c *DB) HLen(name string) (uint64, error) {
+	return redis.Uint64(c.Do("HLEN", name))
 }
 
 // Pipeline 开启事务，使用 Execute 方法提交事务。
@@ -217,7 +219,7 @@ type TranCommand struct {
 func (t *TranCommand) Send(command string, args ...interface{}) error {
 	command = strings.ToUpper(command)
 	nameOrKey := args[0].(string)
-	if ufc.StrInSlice(command, commandsWithPrefix) && nameOrKey != "" {
+	if inSlice(command, commandsWithPrefix) && nameOrKey != "" {
 		args[0] = t.prefix + nameOrKey
 	}
 
