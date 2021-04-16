@@ -1,4 +1,4 @@
-v0.2.1
+v0.4.0
 ======
 
-add `Pipeline.HSet`
+add `HVals`, `HEXISTS`, `Expire`, `TTL`

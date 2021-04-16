@@ -1,3 +1,3 @@
-module tcw.im/ufc
+module tcw.im/gtc
 
 go 1.13

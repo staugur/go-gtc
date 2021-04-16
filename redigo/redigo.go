@@ -1,3 +1,19 @@
+/*
+   Copyright 2021 Hiroshi.tao
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+
 package redigo
 
 import (
@@ -8,7 +24,7 @@ import (
 	"github.com/gomodule/redigo/redis"
 )
 
-const VERSION = "0.3.0"
+const VERSION = "0.4.0"
 
 // DB 一个数据库连接结构
 type DB struct {
@@ -20,10 +36,10 @@ type DB struct {
 
 // 允许适配前缀的命令
 var commandsWithPrefix = []string{
-	"GET", "SET", "EXISTS", "DEL", "TYPE",
+	"GET", "SET", "EXISTS", "DEL", "TYPE", "EXPIRE", "TTL",
 	"RPUSH", "LPOP", "RPOP", "LLEN", "LRANGE",
 	"SADD", "SREM", "SISMEMBER", "SMEMBERS", "SCARD",
-	"HSET", "HMSET", "HGET", "HGETALL", "HLEN",
+	"HSET", "HMSET", "HGET", "HGETALL", "HLEN", "HEXISTS", "HVALS",
 }
 
 // New 打开一个DB连接，rawurl是redis连接串
@@ -95,6 +111,16 @@ func (c *DB) Exsits(key string) (bool, error) {
 // Del 删除单个Key
 func (c *DB) Del(key string) (bool, error) {
 	return redis.Bool(c.Do("DEL", key))
+}
+
+// Expire 设置Key的过期时间，过期后将不可用，单位秒
+func (c *DB) Expire(key string, second uint64) (bool, error) {
+	return redis.Bool(c.Do("EXPIRE", key, second))
+}
+
+// TTL 以秒为单位返回Key的剩余过期时间
+func (c *DB) TTL(key string) (uint64, error) {
+	return redis.Uint64(c.Do("TTL", key))
 }
 
 // Ping 测试连接
@@ -193,6 +219,16 @@ func (c *DB) HGetAll(name string) (map[string]string, error) {
 // HLen 返回哈希表长度
 func (c *DB) HLen(name string) (uint64, error) {
 	return redis.Uint64(c.Do("HLEN", name))
+}
+
+// HExists 判断哈希表中是否有某个Key
+func (c *DB) HExists(name, key string) (bool, error) {
+	return redis.Bool(c.Do("HEXISTS", name, key))
+}
+
+// HVals 返回哈希表所有域的值
+func (c *DB) HVals(name string) ([]string, error) {
+	return redis.Strings(c.Do("HVALS", name))
 }
 
 // Pipeline 开启事务，使用 Execute 方法提交事务。

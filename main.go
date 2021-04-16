@@ -1,4 +1,20 @@
-package ufc
+/*
+   Copyright 2021 Hiroshi.tao
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+
+package gtc
 
 import (
 	"crypto/md5"
@@ -12,7 +28,7 @@ import (
 	"strings"
 )
 
-const VERSION = "0.2.2"
+const VERSION = "1.0.0"
 
 // PathExist 检测路径是否存在
 func PathExist(path string) bool {
@@ -216,4 +232,26 @@ func MD5File(filePath string) (MD5 string, err error) {
 	}
 	hashInBytes := hash.Sum(nil)[:16]
 	return hex.EncodeToString(hashInBytes), nil
+}
+
+// FindSlice 在切片中寻找一个元素。如果找到则返回其键，否则将返回-1
+func FindSlice(slice []string, val string) int {
+	for i, item := range slice {
+		if item == val {
+			return i
+		}
+	}
+	return -1
+}
+
+// SubStr 截取字符串，start、end是起始、终点（不包含）索引，超出索引返回空值
+func SubStr(str string, start uint, end uint) string {
+	rs := []rune(str)
+	length := len(rs)
+
+	if start > uint(length) || end > uint(length) {
+		return ""
+	}
+
+	return string(rs[start:end])
 }

@@ -1,4 +1,4 @@
-module tcw.im/ufc/redigo
+module tcw.im/gtc/redigo
 
 go 1.13
 

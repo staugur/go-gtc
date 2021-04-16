@@ -1,4 +1,4 @@
-package ufc
+package gtc
 
 import (
 	"io/ioutil"
@@ -286,6 +286,23 @@ func TestString(t *testing.T) {
 	if has == true {
 		t.Fatal("[]int{1} not in s2")
 	}
+
+	sf := []string{"a", "b"}
+	if FindSlice(sf, "a") != 0 {
+		t.Fatal("err, it should be 0 for FindSlice")
+	}
+	if FindSlice(sf, "c") != -1 {
+		t.Fatal("err, not found, -1 for FindSlice")
+	}
+
+	ss1 := "abcd"
+	ss2 := "你好，世界"
+	if SubStr(ss1, 0, 2) != "ab" {
+		t.Fatal("err for SubStr test 1")
+	}
+	if SubStr(ss2, 1, 3) != "好，" {
+		t.Fatal("err for SubStr test 2")
+	}
 }
 
 func TestTool(t *testing.T) {
@@ -306,5 +323,11 @@ func TestTool(t *testing.T) {
 	}
 	if md5v != md5fv {
 		t.Fatal("md5file result error")
+	}
+}
+
+func BenchmarkSubStr(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		SubStr("abaghjpiowpoejgre8786awef86wer8962", 3, 15)
 	}
 }

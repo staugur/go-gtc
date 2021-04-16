@@ -68,6 +68,18 @@ func TestDBString(t *testing.T) {
 		t.Fatal("exists error")
 	}
 
+	ok, err = c.Expire(k, 10)
+	raise(t, err)
+	if !ok {
+		t.Fatal("expire error")
+	}
+
+	ttl, err := c.TTL(k)
+	raise(t, err)
+	if ttl <= 0 || !(ttl > 5) {
+		t.Fatal("ttl error")
+	}
+
 	_, err = c.Del(k)
 	raise(t, err)
 	has, _ = c.Exsits(k)
@@ -204,6 +216,15 @@ func TestHash(t *testing.T) {
 	raise(t, err)
 	if !ok {
 		t.Fatal("hmset error")
+	}
+
+	vals, err := c.HVals(n)
+	raise(t, err)
+	if len(vals) != 2 {
+		t.Fatal("hvals error")
+	}
+	if !inSlice(v, vals) {
+		t.Fatal("hvals values error")
 	}
 
 	typ, err := c.Type(n)
