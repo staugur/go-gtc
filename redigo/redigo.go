@@ -24,8 +24,6 @@ import (
 	"github.com/gomodule/redigo/redis"
 )
 
-const VERSION = "0.4.0"
-
 // DB 一个数据库连接结构
 type DB struct {
 	// key前缀
@@ -67,7 +65,9 @@ func (c *DB) Do(command string, args ...interface{}) (reply interface{}, err err
 	if len(args) > 0 {
 		key := args[0].(string)
 		if inSlice(command, commandsWithPrefix) && key != "" {
-			args[0] = c.Prefix + key
+			if !strings.HasPrefix(key, c.Prefix) {
+				args[0] = c.Prefix + key
+			}
 		}
 	}
 	rc := c.pool.Get()
@@ -256,7 +256,9 @@ func (t *TranCommand) Send(command string, args ...interface{}) error {
 	command = strings.ToUpper(command)
 	nameOrKey := args[0].(string)
 	if inSlice(command, commandsWithPrefix) && nameOrKey != "" {
-		args[0] = t.prefix + nameOrKey
+		if !strings.HasPrefix(nameOrKey, t.prefix) {
+			args[0] = t.prefix + nameOrKey
+		}
 	}
 
 	return t.conn.Send(command, args...)
