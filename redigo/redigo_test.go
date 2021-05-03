@@ -227,6 +227,15 @@ func TestHash(t *testing.T) {
 		t.Fatal("hvals values error")
 	}
 
+	keys, err := c.HKeys(n)
+	raise(t, err)
+	if len(keys) != 2 {
+		t.Fatal("hkeys error")
+	}
+	if !inSlice(k, keys) {
+		t.Fatal("hkeys values error")
+	}
+
 	typ, err := c.Type(n)
 	raise(t, err)
 	if typ != "hash" {
