@@ -236,6 +236,13 @@ func TestHash(t *testing.T) {
 		t.Fatal("hkeys values error")
 	}
 
+	_, err = c.HDel(n, k)
+	raise(t, err)
+	keys2, _ := c.HKeys(n)
+	if len(keys2) != 1 {
+		t.Fatal("hdel error")
+	}
+
 	typ, err := c.Type(n)
 	raise(t, err)
 	if typ != "hash" {

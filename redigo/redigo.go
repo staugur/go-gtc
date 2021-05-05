@@ -38,6 +38,7 @@ var commandsWithPrefix = []string{
 	"RPUSH", "LPOP", "RPOP", "LLEN", "LRANGE",
 	"SADD", "SREM", "SISMEMBER", "SMEMBERS", "SCARD",
 	"HSET", "HMSET", "HGET", "HGETALL", "HLEN", "HEXISTS", "HVALS", "HKEYS",
+	"HDEL",
 }
 
 // New 打开一个DB连接，rawurl是redis连接串
@@ -234,6 +235,12 @@ func (c *DB) HVals(name string) ([]string, error) {
 // HKeys 返回哈希表所有域的键
 func (c *DB) HKeys(name string) ([]string, error) {
 	return redis.Strings(c.Do("HKEYS", name))
+}
+
+// HDel 删除哈希表中的一个或多个指定字段
+func (c *DB) HDel(name string, keys ...string) (uint64, error) {
+	args := kpv(name, keys)
+	return redis.Uint64(c.Do("HDEL", args...))
 }
 
 // Pipeline 开启事务，使用 Execute 方法提交事务。
