@@ -135,7 +135,7 @@ func (c *DB) Ping() (bool, error) {
 
 // RPush 将一个或多个值插入到列表的尾部(最右边)
 func (c *DB) RPush(key string, values ...string) (uint64, error) {
-	args := kpv(key, values)
+	args := KPV(key, values)
 	return redis.Uint64(c.Do("RPUSH", args...))
 }
 
@@ -161,13 +161,13 @@ func (c *DB) LRange(key string, start, end int) ([]string, error) {
 
 // SAdd 将一个或多个成员元素加入到集合中，已经存在于集合的成员元素将被忽略
 func (c *DB) SAdd(key string, members ...string) (uint64, error) {
-	args := kpv(key, members)
+	args := KPV(key, members)
 	return redis.Uint64(c.Do("SADD", args...))
 }
 
 // SRem 移除集合中的一个或多个成员元素，不存在的成员元素会被忽略
 func (c *DB) SRem(key string, members ...string) (uint64, error) {
-	args := kpv(key, members)
+	args := KPV(key, members)
 	return redis.Uint64(c.Do("SREM", args...))
 }
 
@@ -239,7 +239,7 @@ func (c *DB) HKeys(name string) ([]string, error) {
 
 // HDel 删除哈希表中的一个或多个指定字段
 func (c *DB) HDel(name string, keys ...string) (uint64, error) {
-	args := kpv(name, keys)
+	args := KPV(name, keys)
 	return redis.Uint64(c.Do("HDEL", args...))
 }
 
@@ -248,23 +248,31 @@ func (c *DB) HDel(name string, keys ...string) (uint64, error) {
 //
 // t := instance.Pipeline()
 //
-// t.Set/RPush/Del...
+// t.Set/RPush/Del...(or use Send method)
 //
 // t.Execute()
 func (c *DB) Pipeline() *TranCommand {
 	rc := c.pool.Get()
 	rc.Send("MULTI")
-	return &TranCommand{c.Prefix, rc}
+	return &TranCommand{c.Prefix, rc, false}
 }
 
-// TranCommand 表示事务管道
+// TranCommand 表示事务管道。
+// 执行流程是：由 `DB.Pipeline` 开启，通过 Send 缓冲命令，最后 Execute 发送。
 type TranCommand struct {
 	prefix string
 	conn   redis.Conn
+	commit bool
 }
+
+// 管道已经关闭（已经使用 Execute 提交）
+var ErrTranClosed = errors.New("pipeline closed")
 
 // Send 将命令写入客户端的输出缓冲区。
 func (t *TranCommand) Send(command string, args ...interface{}) error {
+	if t.commit {
+		return ErrTranClosed
+	}
 	command = strings.ToUpper(command)
 	nameOrKey := args[0].(string)
 	if inSlice(command, commandsWithPrefix) && nameOrKey != "" {
@@ -278,6 +286,10 @@ func (t *TranCommand) Send(command string, args ...interface{}) error {
 
 // Execute 执行提交事务
 func (t *TranCommand) Execute() ([]interface{}, error) {
+	if t.commit {
+		return nil, ErrTranClosed
+	}
+	t.commit = true
 	defer t.conn.Close()
 	return redis.Values(t.conn.Do("EXEC"))
 }
@@ -294,23 +306,29 @@ func (t *TranCommand) Del(key string) error {
 
 // RPush 管道中的 RPush
 func (t *TranCommand) RPush(key string, values ...string) error {
-	args := kpv(key, values)
+	args := KPV(key, values)
 	return t.Send("RPUSH", args...)
 }
 
 // SAdd 管道中的 SAdd
 func (t *TranCommand) SAdd(key string, members ...string) error {
-	args := kpv(key, members)
+	args := KPV(key, members)
 	return t.Send("SADD", args...)
 }
 
 // SRem 管道中的 SRem
 func (t *TranCommand) SRem(key string, members ...string) error {
-	args := kpv(key, members)
+	args := KPV(key, members)
 	return t.Send("SREM", args...)
 }
 
 // HSet 管道中的 HSet
 func (t *TranCommand) HSet(name, key, value string) error {
 	return t.Send("HSET", name, key, value)
+}
+
+// HDel 管道中的 HDel
+func (t *TranCommand) HDel(name string, keys ...string) error {
+	args := KPV(name, keys)
+	return t.Send("HDEL", args...)
 }

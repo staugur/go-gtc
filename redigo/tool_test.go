@@ -17,7 +17,7 @@ func TestTool(t *testing.T) {
 		t.Fatal("b not in slice")
 	}
 
-	if kpv("a", []string{"b", "c"})[0].(string) != "a" {
+	if KPV("a", []string{"b", "c"})[0].(string) != "a" {
 		t.Fatal("kpv error")
 	}
 }

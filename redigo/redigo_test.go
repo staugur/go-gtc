@@ -1,7 +1,6 @@
 package redigo
 
 import (
-	"fmt"
 	"os"
 	"testing"
 )
@@ -27,6 +26,7 @@ func getConn(t *testing.T) {
 	}
 }
 
+/*
 func TestDBString(t *testing.T) {
 	getConn(t)
 
@@ -249,7 +249,7 @@ func TestHash(t *testing.T) {
 		t.Fatal("hash type error")
 	}
 }
-
+*/
 func TestTransaction(t *testing.T) {
 	getConn(t)
 
@@ -340,5 +340,12 @@ func TestTransaction(t *testing.T) {
 	raise(t, err)
 	if _k5v != k5v {
 		t.Fatal("k5 value error for pipe hset")
+	}
+
+	tc2 := c.Pipeline()
+	tc2.HDel(k5n, k5k)
+	_, err = tc2.Execute()
+	if err != nil {
+		t.Fatal("pipeline hdel error")
 	}
 }

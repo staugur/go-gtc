@@ -1,3 +1,10 @@
+v0.4.4
+======
+
+- add Pipeline.HDel
+- public `KPV`
+- fix pipeline execute after committed
+
 v0.4.3
 ======
 

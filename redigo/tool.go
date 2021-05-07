@@ -27,7 +27,7 @@ func inSlice(val string, slice []string) bool {
 }
 
 // 将key加入到v切片头部
-func kpv(key string, values []string) []interface{} {
+func KPV(key string, values []string) []interface{} {
 	a := append([]string{key}, values...)
 
 	//converting a []string to a []interface{}
