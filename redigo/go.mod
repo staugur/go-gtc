@@ -1,4 +1,4 @@
-module tcw.im/gtc/redigo
+module pkg.tcw.im/gtc/redigo
 
 go 1.13
 
