@@ -21,14 +21,13 @@ import (
 	"encoding/hex"
 	"errors"
 	"io"
-	"io/ioutil"
 	"os"
 	"reflect"
 	"strconv"
 	"strings"
 )
 
-const VERSION = "2.0.0"
+const VERSION = "1.1.0"
 
 // PathExist 检测路径是否存在
 func PathExist(path string) bool {
@@ -95,7 +94,7 @@ func FileReadByte(path string) ([]byte, error) {
 		return nil, err
 	}
 	defer fi.Close()
-	return ioutil.ReadAll(fi)
+	return io.ReadAll(fi)
 }
 
 // FileReadStr 读取指定的文件，并返回字符串
