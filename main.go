@@ -28,7 +28,7 @@ import (
 	"strings"
 )
 
-const VERSION = "1.0.0"
+const VERSION = "2.0.0"
 
 // PathExist 检测路径是否存在
 func PathExist(path string) bool {
